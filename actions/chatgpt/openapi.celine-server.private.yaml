@@ -1,8 +1,8 @@
 openapi: 3.1.0
 info:
   title: Celine Server Private GPT Action Gateway
-  version: 0.1.0
-  description: Private read/dry-run GPT Action gateway for Ken. Requires CELINE_ACTION_TOKEN. No write routes, app launching, Forge Key mutation, or command execution.
+  version: 0.2.0
+  description: Private read, dry-run, and approved-test GPT Action gateway for Ken. Requires CELINE_ACTION_TOKEN. No app launching, Forge Key mutation, Jira create, shell execution, or arbitrary command execution.
 servers:
   - url: https://action-celine.thecreatorsmark.org
 security:
@@ -12,65 +12,75 @@ paths:
     get:
       operationId: getPrivateGatewayHealth
       summary: Get private gateway health.
-      responses:
-        "200":
-          description: Private health response.
-        "401":
-          description: Unauthorized.
+      responses: { "200": { description: OK }, "401": { description: Unauthorized } }
   /gpt-action/private/status:
     get:
       operationId: getPrivateGatewayStatus
       summary: Get private gateway status and capability summary.
-      responses:
-        "200":
-          description: Private status response.
-        "401":
-          description: Unauthorized.
+      responses: { "200": { description: OK }, "401": { description: Unauthorized } }
   /gpt-action/private/projects:
     get:
       operationId: getPrivateProjects
       summary: Get Celine project registry.
-      responses:
-        "200":
-          description: Project registry response.
-        "401":
-          description: Unauthorized.
+      responses: { "200": { description: OK }, "401": { description: Unauthorized } }
   /gpt-action/private/tools:
     get:
       operationId: getPrivateTools
       summary: Detect local development tools using fixed checks only.
-      responses:
-        "200":
-          description: Tool detection response.
-        "401":
-          description: Unauthorized.
+      responses: { "200": { description: OK }, "401": { description: Unauthorized } }
+  /gpt-action/private/system:
+    get:
+      operationId: getPrivateSystem
+      summary: Get basic system/runtime facts without env values.
+      responses: { "200": { description: OK }, "401": { description: Unauthorized } }
+  /gpt-action/private/apps:
+    get:
+      operationId: getPrivateInstalledApps
+      summary: List installed macOS app bundles. Does not open apps.
+      responses: { "200": { description: OK }, "401": { description: Unauthorized } }
+  /gpt-action/private/workspace/moth-market:
+    get:
+      operationId: getPrivateMothMarketWorkspace
+      summary: Get Moth Market workspace config. Does not open apps or URLs.
+      responses: { "200": { description: OK }, "401": { description: Unauthorized } }
   /gpt-action/private/notifications:
     get:
       operationId: getPrivateNotificationStatus
       summary: Get notification status without secrets.
-      responses:
-        "200":
-          description: Notification status response.
-        "401":
-          description: Unauthorized.
+      responses: { "200": { description: OK }, "401": { description: Unauthorized } }
   /gpt-action/private/notifications/events/recent:
     get:
       operationId: getPrivateRecentNotificationEvents
       summary: Get recent notification events without secrets.
-      responses:
-        "200":
-          description: Recent notification events response.
-        "401":
-          description: Unauthorized.
+      responses: { "200": { description: OK }, "401": { description: Unauthorized } }
+  /gpt-action/private/notifications/test:
+    post:
+      operationId: sendPrivateTestNotification
+      summary: Send one explicit test notification.
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title: { type: string, default: Celine Server }
+                message: { type: string, default: Private GPT Action notification test. }
+                severity:
+                  type: string
+                  enum: [silent, low, normal, high]
+                  default: normal
+      responses: { "200": { description: OK }, "401": { description: Unauthorized }, "502": { description: Provider failed } }
   /gpt-action/private/assistant/jobs/catalog:
     get:
       operationId: getPrivateAssistantJobCatalog
       summary: Get Assistant Bridge job catalog.
-      responses:
-        "200":
-          description: Assistant job catalog response.
-        "401":
-          description: Unauthorized.
+      responses: { "200": { description: OK }, "401": { description: Unauthorized } }
+  /gpt-action/private/assistant/logs/recent:
+    get:
+      operationId: getPrivateAssistantLogs
+      summary: Get recent Assistant Bridge audit events.
+      responses: { "200": { description: OK }, "401": { description: Unauthorized } }
   /gpt-action/private/assistant/jobs/dry-run:
     post:
       operationId: dryRunPrivateAssistantJob
@@ -82,17 +92,63 @@ paths:
             schema:
               type: object
               properties:
-                jobType:
-                  type: string
-              required:
-                - jobType
-      responses:
-        "200":
-          description: Dry-run response.
-        "400":
-          description: Unknown or invalid job type.
-        "401":
-          description: Unauthorized.
+                jobType: { type: string }
+              required: [jobType]
+      responses: { "200": { description: OK }, "400": { description: Bad request }, "401": { description: Unauthorized } }
+  /gpt-action/private/assistant/jobs:
+    post:
+      operationId: queuePrivateAssistantJobPlaceholder
+      summary: Queue an in-memory Assistant Bridge placeholder. Does not execute jobs.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                jobType: { type: string }
+              required: [jobType]
+      responses: { "200": { description: OK }, "400": { description: Bad request }, "401": { description: Unauthorized } }
+  /gpt-action/private/launcher:
+    get:
+      operationId: getPrivateLauncherStatus
+      summary: Get launcher status. Does not launch apps.
+      responses: { "200": { description: OK }, "401": { description: Unauthorized } }
+  /gpt-action/private/launcher/apps:
+    get:
+      operationId: getPrivateLauncherApps
+      summary: Get allowlisted launcher apps. Does not launch apps.
+      responses: { "200": { description: OK }, "401": { description: Unauthorized } }
+  /gpt-action/private/launcher/logs/recent:
+    get:
+      operationId: getPrivateLauncherLogs
+      summary: Get recent launcher logs.
+      responses: { "200": { description: OK }, "401": { description: Unauthorized } }
+  /gpt-action/private/launcher/open-any/status:
+    get:
+      operationId: getPrivateOpenAnyStatus
+      summary: Get open-any status. Does not open apps.
+      responses: { "200": { description: OK }, "401": { description: Unauthorized } }
+  /gpt-action/private/launcher/open-any/events/recent:
+    get:
+      operationId: getPrivateOpenAnyEvents
+      summary: Get recent open-any audit events.
+      responses: { "200": { description: OK }, "401": { description: Unauthorized } }
+  /gpt-action/private/forge-key:
+    get:
+      operationId: getPrivateForgeKeyStatus
+      summary: Get Forge Key status. Does not enable or disable Forge Key.
+      responses: { "200": { description: OK }, "401": { description: Unauthorized } }
+  /gpt-action/private/forge-key/events/recent:
+    get:
+      operationId: getPrivateForgeKeyEvents
+      summary: Get recent Forge Key events.
+      responses: { "200": { description: OK }, "401": { description: Unauthorized } }
+  /gpt-action/private/audit/recent:
+    get:
+      operationId: getPrivateRecentAudit
+      summary: Get combined recent audit events.
+      responses: { "200": { description: OK }, "401": { description: Unauthorized } }
   /gpt-action/private/obsidian/vault/list:
     post:
       operationId: listPrivateObsidianVaultPath
@@ -104,14 +160,8 @@ paths:
             schema:
               type: object
               properties:
-                path:
-                  type: string
-                  default: /
-      responses:
-        "200":
-          description: Vault list response.
-        "401":
-          description: Unauthorized.
+                path: { type: string, default: / }
+      responses: { "200": { description: OK }, "401": { description: Unauthorized } }
   /gpt-action/private/obsidian/vault/read:
     post:
       operationId: readPrivateObsidianVaultNote
@@ -123,15 +173,9 @@ paths:
             schema:
               type: object
               properties:
-                path:
-                  type: string
-              required:
-                - path
-      responses:
-        "200":
-          description: Vault note response.
-        "401":
-          description: Unauthorized.
+                path: { type: string }
+              required: [path]
+      responses: { "200": { description: OK }, "401": { description: Unauthorized } }
   /gpt-action/private/obsidian/vault/search:
     post:
       operationId: searchPrivateObsidianVault
@@ -143,27 +187,15 @@ paths:
             schema:
               type: object
               properties:
-                query:
-                  type: string
-                contextLength:
-                  type: number
-                  default: 200
-              required:
-                - query
-      responses:
-        "200":
-          description: Vault search response.
-        "401":
-          description: Unauthorized.
+                query: { type: string }
+                contextLength: { type: number, default: 200 }
+              required: [query]
+      responses: { "200": { description: OK }, "401": { description: Unauthorized } }
   /gpt-action/private/obsidian/vault/active:
     get:
       operationId: getPrivateObsidianActiveNote
       summary: Get active Obsidian note.
-      responses:
-        "200":
-          description: Active note response.
-        "401":
-          description: Unauthorized.
+      responses: { "200": { description: OK }, "401": { description: Unauthorized } }
   /gpt-action/private/scrivener/list:
     post:
       operationId: listPrivateScrivenerDocuments
@@ -175,14 +207,8 @@ paths:
             schema:
               type: object
               properties:
-                folder:
-                  type: string
-                  default: Manuscript
-      responses:
-        "200":
-          description: Scrivener binder response.
-        "401":
-          description: Unauthorized.
+                folder: { type: string, default: Manuscript }
+      responses: { "200": { description: OK }, "401": { description: Unauthorized } }
   /gpt-action/private/scrivener/read:
     post:
       operationId: readPrivateScrivenerDocument
@@ -194,17 +220,46 @@ paths:
             schema:
               type: object
               properties:
-                titleOrUuid:
-                  type: string
-              required:
-                - titleOrUuid
-      responses:
-        "200":
-          description: Scrivener document response.
-        "401":
-          description: Unauthorized.
-        "404":
-          description: Document not found.
+                titleOrUuid: { type: string }
+              required: [titleOrUuid]
+      responses: { "200": { description: OK }, "401": { description: Unauthorized }, "404": { description: Not found } }
+  /gpt-action/private/jira/issues/{key}:
+    get:
+      operationId: getPrivateJiraIssue
+      summary: Fail-safe Jira issue read placeholder. Returns 501 until Jira runtime is configured.
+      parameters:
+        - name: key
+          in: path
+          required: true
+          schema: { type: string }
+      responses: { "501": { description: Jira runtime not configured }, "401": { description: Unauthorized } }
+  /gpt-action/private/jira/issues/{key}/children:
+    get:
+      operationId: getPrivateJiraIssueChildren
+      summary: Fail-safe Jira children read placeholder. Returns 501 until Jira runtime is configured.
+      parameters:
+        - name: key
+          in: path
+          required: true
+          schema: { type: string }
+      responses: { "501": { description: Jira runtime not configured }, "401": { description: Unauthorized } }
+  /gpt-action/private/jira/subtasks/dry-run:
+    post:
+      operationId: dryRunPrivateJiraSubtasks
+      summary: Validate and echo intended Jira subtask payload. Does not create issues.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                parentKey: { type: string }
+                subtasks:
+                  type: array
+                  items: { type: string }
+              required: [parentKey, subtasks]
+      responses: { "200": { description: Dry-run payload }, "400": { description: Bad request }, "401": { description: Unauthorized } }
 components:
   securitySchemes:
     celineActionBearer:
