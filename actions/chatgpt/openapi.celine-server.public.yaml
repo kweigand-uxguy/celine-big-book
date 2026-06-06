@@ -4,7 +4,7 @@ info:
   version: 0.1.0
   description: Public sanitized read-only GPT Action gateway. No secrets, no write routes, no app launching, no Forge Key mutation, and no command execution.
 servers:
-  - url: https://celine.thecreatorsmark.org
+  - url: https://action-celine.thecreatorsmark.org
 paths:
   /gpt-action/health:
     get:
