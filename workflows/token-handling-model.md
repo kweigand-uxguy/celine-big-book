@@ -25,20 +25,24 @@ ChatGPT should not know secrets.
 
 Codex and local helper scripts can connect because they run on Ken's Mac and can source `.env` locally without printing it.
 
-Direct ChatGPT access to protected systems would require a future secured connector, ChatGPT Action, or MCP tool where credentials are stored in connector/tool configuration, not in chat text or memory.
+Direct ChatGPT access to Celine Server uses the GPT Action gateway on:
 
-Never paste tokens into chat.
+```text
+https://action-celine.thecreatorsmark.org
+```
 
-## ChatGPT Action Note
-
-Direct ChatGPT access to Celine Server requires a ChatGPT Action or MCP connector.
-
-The first local Action package lives at:
+The Action package lives at:
 
 ```text
 ~/Celine/celine-server/actions/chatgpt/
 ```
 
-The initial install-ready specs are read-only/dry-run only.
+Recommended Custom GPT install:
 
-Write-capable actions require future explicit approval.
+```text
+actions/chatgpt/openapi.celine-server.private.yaml
+```
+
+Use `CELINE_ACTION_TOKEN` in the Custom GPT Action auth UI. Do not reuse `CELINE_API_TOKEN`.
+
+Approved Jira, GitHub, and Keyboard Maestro writes require dry-run first and explicit Ken approval text. App launching, Forge Key mutation, workspace launching, and shell execution remain excluded.

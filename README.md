@@ -53,5 +53,11 @@ Primary reference:
 reference/chatgpt-action-package.md
 ```
 
-Install-ready specs are read-only/dry-run only. Write-capable Actions require a future explicit phase and Ken approval.
+Install-ready schema:
+
+```text
+actions/chatgpt/openapi.celine-server.private.yaml
+```
+
+The private gateway includes approved Jira, GitHub, and Keyboard Maestro writes with explicit approval text. App launching, Forge Key mutation, workspace launching, and shell execution remain excluded.
 

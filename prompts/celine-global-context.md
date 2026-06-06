@@ -83,6 +83,12 @@ Known base URL:
 https://celine.thecreatorsmark.org
 ```
 
+ChatGPT Action hostname:
+
+```text
+https://action-celine.thecreatorsmark.org
+```
+
 Protected routes may require:
 
 - Cloudflare Access service headers from local scripts
@@ -91,15 +97,21 @@ Protected routes may require:
 ChatGPT should not know the secret values.
 Codex/local scripts may source `.env` safely on Ken's Mac.
 
-Direct ChatGPT access to Celine Server requires a ChatGPT Action or MCP connector.
+Direct ChatGPT access to Celine Server uses the GPT Action gateway.
 
-The first local Action package lives at:
+The Action package lives at:
 
 ```text
 ~/Celine/celine-server/actions/chatgpt/
 ```
 
-The initial install-ready specs are read-only/dry-run only. Write-capable actions require a future explicit phase and Ken approval.
+Recommended Custom GPT install:
+
+```text
+actions/chatgpt/openapi.celine-server.private.yaml
+```
+
+The private gateway includes approved Jira, GitHub, and Keyboard Maestro writes with explicit approval text. It still excludes app launching, Forge Key mutation, workspace launching, and shell execution.
 
 ## Default Write-Capable Workflow
 

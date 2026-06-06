@@ -35,6 +35,16 @@ The first local Action package lives at:
 ~/Celine/celine-server/actions/chatgpt/
 ```
 
-The initial install-ready specs are read-only/dry-run only.
+ChatGPT Action hostname:
 
-Write-capable actions require a future explicit phase and Ken approval.
+```text
+https://action-celine.thecreatorsmark.org
+```
+
+Recommended Custom GPT install:
+
+```text
+actions/chatgpt/openapi.celine-server.private.yaml
+```
+
+The private gateway includes approved Jira, GitHub, and Keyboard Maestro writes with explicit approval text. App launching, Forge Key mutation, workspace launching, and shell execution remain excluded.
