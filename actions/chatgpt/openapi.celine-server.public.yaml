@@ -1,0 +1,44 @@
+openapi: 3.1.0
+info:
+  title: Celine Server Public GPT Action Gateway
+  version: 0.1.0
+  description: Public sanitized read-only GPT Action gateway. No secrets, no write routes, no app launching, no Forge Key mutation, and no command execution.
+servers:
+  - url: https://celine.thecreatorsmark.org
+paths:
+  /gpt-action/health:
+    get:
+      operationId: getPublicGatewayHealth
+      summary: Get public Celine GPT Action gateway health.
+      responses:
+        "200":
+          description: Public gateway health response.
+        "429":
+          description: Rate limit exceeded.
+  /gpt-action/status:
+    get:
+      operationId: getPublicGatewayStatus
+      summary: Get sanitized public Celine GPT Action gateway status.
+      responses:
+        "200":
+          description: Sanitized public gateway status response.
+        "429":
+          description: Rate limit exceeded.
+  /gpt-action/projects:
+    get:
+      operationId: getPublicProjectSummary
+      summary: Get sanitized public project summary.
+      responses:
+        "200":
+          description: Sanitized public project summary response.
+        "429":
+          description: Rate limit exceeded.
+  /gpt-action/metadata:
+    get:
+      operationId: getPublicGatewayMetadata
+      summary: Get public Action metadata and Big Book pointers.
+      responses:
+        "200":
+          description: Public gateway metadata response.
+        "429":
+          description: Rate limit exceeded.
