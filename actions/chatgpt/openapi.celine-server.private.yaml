@@ -1,8 +1,8 @@
 openapi: 3.1.0
 info:
   title: Celine Server Private GPT Action Gateway
-  version: 0.2.0
-  description: Private read, dry-run, and approved-test GPT Action gateway for Ken. Requires CELINE_ACTION_TOKEN. No app launching, Forge Key mutation, Jira create, shell execution, or arbitrary command execution.
+  version: 0.3.0
+  description: Private read, dry-run, and approved-test GPT Action gateway for Ken. Requires CELINE_ACTION_TOKEN. Jira read/dry-run routes use Atlassian CLI locally. No Jira create, shell execution, or arbitrary command execution.
 servers:
   - url: https://action-celine.thecreatorsmark.org
 security:
@@ -226,27 +226,27 @@ paths:
   /gpt-action/private/jira/issues/{key}:
     get:
       operationId: getPrivateJiraIssue
-      summary: Fail-safe Jira issue read placeholder. Returns 501 until Jira runtime is configured.
+      summary: Read a Jira issue through the local Atlassian CLI.
       parameters:
         - name: key
           in: path
           required: true
           schema: { type: string }
-      responses: { "501": { description: Jira runtime not configured }, "401": { description: Unauthorized } }
+      responses: { "200": { description: OK }, "400": { description: Bad request }, "401": { description: Unauthorized }, "503": { description: Jira CLI not authenticated } }
   /gpt-action/private/jira/issues/{key}/children:
     get:
       operationId: getPrivateJiraIssueChildren
-      summary: Fail-safe Jira children read placeholder. Returns 501 until Jira runtime is configured.
+      summary: Read Jira child issues/subtasks through the local Atlassian CLI.
       parameters:
         - name: key
           in: path
           required: true
           schema: { type: string }
-      responses: { "501": { description: Jira runtime not configured }, "401": { description: Unauthorized } }
+      responses: { "200": { description: OK }, "400": { description: Bad request }, "401": { description: Unauthorized }, "503": { description: Jira CLI not authenticated } }
   /gpt-action/private/jira/subtasks/dry-run:
     post:
       operationId: dryRunPrivateJiraSubtasks
-      summary: Validate and echo intended Jira subtask payload. Does not create issues.
+      summary: Validate and echo intended Jira subtask payload. Uses Jira CLI to validate the parent issue when authenticated. Does not create issues.
       requestBody:
         required: true
         content:
