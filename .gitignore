@@ -1,0 +1,16 @@
+.env
+.env.*
+*.env
+secrets/
+private/
+node_modules/
+.DS_Store
+*.log
+*.key
+*.pem
+*.p12
+*.mobileprovision
+.vercel/
+.next/
+dist/
+build/
