@@ -1,8 +1,8 @@
 openapi: 3.1.0
 info:
   title: Celine Server Private GPT Action Gateway
-  version: 0.3.0
-  description: Private read, dry-run, and approved-test GPT Action gateway for Ken. Requires CELINE_ACTION_TOKEN. Jira read/dry-run routes use Atlassian CLI locally. No Jira create, shell execution, or arbitrary command execution.
+  version: 0.4.0
+  description: Private read, dry-run, approved Jira write, and approved-test GPT Action gateway for Ken. Requires CELINE_ACTION_TOKEN. Jira write routes require dry-run first and approvalText exactly equal to "Ken approved this Jira write". No shell execution or arbitrary command execution.
 servers:
   - url: https://action-celine.thecreatorsmark.org
 security:
@@ -260,6 +260,185 @@ paths:
                   items: { type: string }
               required: [parentKey, subtasks]
       responses: { "200": { description: Dry-run payload }, "400": { description: Bad request }, "401": { description: Unauthorized } }
+  /gpt-action/private/jira/issues/dry-run-create:
+    post:
+      operationId: dryRunPrivateCreateJiraIssue
+      summary: Preview Jira issue creation. Does not create an issue.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                project: { type: string }
+                type: { type: string, default: Task }
+                summary: { type: string }
+                description: { type: string }
+                parent: { type: string }
+                assignee: { type: string }
+                labels:
+                  type: array
+                  items: { type: string }
+              required: [project, type, summary]
+      responses: { "200": { description: Preview }, "400": { description: Bad request }, "401": { description: Unauthorized } }
+  /gpt-action/private/jira/issues/create:
+    post:
+      operationId: createPrivateJiraIssueWithApproval
+      summary: Create a Jira issue only after Ken approves the preview. Requires approvalText exactly equal to "Ken approved this Jira write".
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                approvalText: { type: string }
+                project: { type: string }
+                type: { type: string, default: Task }
+                summary: { type: string }
+                description: { type: string }
+                parent: { type: string }
+                assignee: { type: string }
+                labels:
+                  type: array
+                  items: { type: string }
+              required: [approvalText, project, type, summary]
+      responses: { "200": { description: Created }, "403": { description: Approval required }, "401": { description: Unauthorized }, "503": { description: Jira CLI unavailable } }
+  /gpt-action/private/jira/issues/{key}/dry-run-edit:
+    post:
+      operationId: dryRunPrivateEditJiraIssue
+      summary: Preview Jira issue edits. Does not mutate Jira.
+      parameters:
+        - name: key
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                summary: { type: string }
+                description: { type: string }
+                assignee: { type: string }
+                type: { type: string }
+                labels:
+                  type: array
+                  items: { type: string }
+                removeAssignee: { type: boolean }
+                removeLabels:
+                  type: array
+                  items: { type: string }
+      responses: { "200": { description: Preview }, "400": { description: Bad request }, "401": { description: Unauthorized } }
+  /gpt-action/private/jira/issues/{key}/edit:
+    post:
+      operationId: editPrivateJiraIssueWithApproval
+      summary: Edit a Jira issue only after Ken approves the preview. Requires approvalText exactly equal to "Ken approved this Jira write".
+      parameters:
+        - name: key
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                approvalText: { type: string }
+                summary: { type: string }
+                description: { type: string }
+                assignee: { type: string }
+                type: { type: string }
+                labels:
+                  type: array
+                  items: { type: string }
+                removeAssignee: { type: boolean }
+                removeLabels:
+                  type: array
+                  items: { type: string }
+              required: [approvalText]
+      responses: { "200": { description: Edited }, "403": { description: Approval required }, "401": { description: Unauthorized }, "503": { description: Jira CLI unavailable } }
+  /gpt-action/private/jira/issues/{key}/comments/dry-run:
+    post:
+      operationId: dryRunPrivateJiraComment
+      summary: Preview a Jira comment. Does not add the comment.
+      parameters:
+        - name: key
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                body: { type: string }
+              required: [body]
+      responses: { "200": { description: Preview }, "400": { description: Bad request }, "401": { description: Unauthorized } }
+  /gpt-action/private/jira/issues/{key}/comments:
+    post:
+      operationId: createPrivateJiraCommentWithApproval
+      summary: Add a Jira comment only after Ken approves the preview. Requires approvalText exactly equal to "Ken approved this Jira write".
+      parameters:
+        - name: key
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                approvalText: { type: string }
+                body: { type: string }
+              required: [approvalText, body]
+      responses: { "200": { description: Comment added }, "403": { description: Approval required }, "401": { description: Unauthorized }, "503": { description: Jira CLI unavailable } }
+  /gpt-action/private/jira/subtasks/dry-run-create:
+    post:
+      operationId: dryRunPrivateCreateJiraSubtasks
+      summary: Preview Jira subtask creation. Does not create subtasks.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                parentKey: { type: string }
+                project: { type: string }
+                subtasks:
+                  type: array
+                  items: { type: string }
+              required: [parentKey, project, subtasks]
+      responses: { "200": { description: Preview }, "400": { description: Bad request }, "401": { description: Unauthorized } }
+  /gpt-action/private/jira/subtasks/create:
+    post:
+      operationId: createPrivateJiraSubtasksWithApproval
+      summary: Create Jira subtasks only after Ken approves the preview. Requires approvalText exactly equal to "Ken approved this Jira write".
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                approvalText: { type: string }
+                parentKey: { type: string }
+                project: { type: string }
+                subtasks:
+                  type: array
+                  items: { type: string }
+              required: [approvalText, parentKey, project, subtasks]
+      responses: { "200": { description: Created }, "403": { description: Approval required }, "401": { description: Unauthorized }, "503": { description: Jira CLI unavailable } }
 components:
   securitySchemes:
     celineActionBearer:
