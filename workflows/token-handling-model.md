@@ -28,3 +28,17 @@ Codex and local helper scripts can connect because they run on Ken's Mac and can
 Direct ChatGPT access to protected systems would require a future secured connector, ChatGPT Action, or MCP tool where credentials are stored in connector/tool configuration, not in chat text or memory.
 
 Never paste tokens into chat.
+
+## ChatGPT Action Note
+
+Direct ChatGPT access to Celine Server requires a ChatGPT Action or MCP connector.
+
+The first local Action package lives at:
+
+```text
+~/Celine/celine-server/actions/chatgpt/
+```
+
+The initial install-ready specs are read-only/dry-run only.
+
+Write-capable actions require future explicit approval.

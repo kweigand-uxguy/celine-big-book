@@ -24,3 +24,17 @@ ChatGPT must not know or store real tokens.
 Codex and local scripts can use `.env` because they run on Ken's Mac and can expand secrets locally without printing them.
 
 Never expose secrets in docs, chat, logs, commits, tickets, or prompts.
+
+## ChatGPT Action Foundation
+
+Direct ChatGPT access to Celine Server requires a ChatGPT Action or MCP connector.
+
+The first local Action package lives at:
+
+```text
+~/Celine/celine-server/actions/chatgpt/
+```
+
+The initial install-ready specs are read-only/dry-run only.
+
+Write-capable actions require a future explicit phase and Ken approval.

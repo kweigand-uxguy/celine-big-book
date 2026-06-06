@@ -1,0 +1,83 @@
+openapi: 3.1.0
+info:
+  title: Celine Jira Bridge Action
+  version: 0.1.0
+  description: Jira read and dry-run endpoints for a future ChatGPT Action. Jira create is intentionally excluded.
+servers:
+  - url: https://celine.thecreatorsmark.org
+security:
+  - celineActionBearer: []
+paths:
+  /jira/issues/{key}:
+    get:
+      operationId: getJiraIssue
+      summary: Read a Jira issue by key.
+      parameters:
+        - name: key
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Jira issue key, such as PROJECT-123.
+      responses:
+        "200":
+          description: Jira issue response.
+        "401":
+          description: Unauthorized.
+        "404":
+          description: Issue not found.
+  /jira/issues/{key}/children:
+    get:
+      operationId: getJiraIssueChildren
+      summary: Read child issues or subtasks for a Jira issue key.
+      parameters:
+        - name: key
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Jira issue key, such as PROJECT-123.
+      responses:
+        "200":
+          description: Jira issue children response.
+        "401":
+          description: Unauthorized.
+        "404":
+          description: Issue not found.
+  /jira/subtasks/dry-run:
+    post:
+      operationId: dryRunJiraSubtasks
+      summary: Dry-run Jira subtask creation without creating issues.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              properties:
+                parentKey:
+                  type: string
+                  description: Parent Jira issue key.
+                subtasks:
+                  type: array
+                  items:
+                    type: object
+                    additionalProperties: true
+              required:
+                - parentKey
+                - subtasks
+      responses:
+        "200":
+          description: Dry-run response. No Jira issues are created.
+        "400":
+          description: Invalid request.
+        "401":
+          description: Unauthorized.
+components:
+  securitySchemes:
+    celineActionBearer:
+      type: http
+      scheme: bearer
+      bearerFormat: CELINE_ACTION_TOKEN
+      description: Use a separate action token placeholder. Store the real value only in Celine Server .env and the Custom GPT Action auth UI.

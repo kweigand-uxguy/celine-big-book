@@ -1,0 +1,15 @@
+openapi: 3.1.0
+info:
+  title: Celine Server Write-Capable Action Future Draft
+  version: 0.0.0
+  description: NOT FOR INSTALLATION YET. Future-only placeholder for write-capable routes requiring explicit Ken approval, dry-run/confirmation model, and additional implementation.
+servers:
+  - url: https://celine.thecreatorsmark.org
+paths: {}
+components:
+  securitySchemes:
+    celineActionBearer:
+      type: http
+      scheme: bearer
+      bearerFormat: CELINE_ACTION_TOKEN
+      description: Future-only. Do not install this spec.

@@ -1,0 +1,160 @@
+openapi: 3.1.0
+info:
+  title: Celine Server Safe Action
+  version: 0.1.0
+  description: Combined install-ready Celine Server Action schema for read-only and Jira dry-run endpoints only.
+servers:
+  - url: https://celine.thecreatorsmark.org
+security:
+  - celineActionBearer: []
+paths:
+  /health:
+    get:
+      operationId: getHealth
+      summary: Get public service health.
+      security: []
+      responses:
+        "200":
+          description: Health response.
+  /status:
+    get:
+      operationId: getStatus
+      summary: Get protected Celine Server status.
+      responses:
+        "200":
+          description: Status response.
+        "401":
+          description: Unauthorized.
+  /projects:
+    get:
+      operationId: getProjects
+      summary: List registered Celine projects.
+      responses:
+        "200":
+          description: Project registry response.
+        "401":
+          description: Unauthorized.
+  /tools:
+    get:
+      operationId: getTools
+      summary: List detected local development tools.
+      responses:
+        "200":
+          description: Tool detection response.
+        "401":
+          description: Unauthorized.
+  /notifications:
+    get:
+      operationId: getNotifications
+      summary: Get notification bus status without secrets.
+      responses:
+        "200":
+          description: Notification status response.
+        "401":
+          description: Unauthorized.
+  /notifications/hooks:
+    get:
+      operationId: getNotificationHooks
+      summary: Get notification hook status without secrets.
+      responses:
+        "200":
+          description: Notification hook status response.
+        "401":
+          description: Unauthorized.
+  /forge-key:
+    get:
+      operationId: getForgeKeyStatus
+      summary: Get Forge Key status. Does not enable Forge Key.
+      responses:
+        "200":
+          description: Forge Key status response.
+        "401":
+          description: Unauthorized.
+  /launcher:
+    get:
+      operationId: getLauncherStatus
+      summary: Get controlled app launcher status. Does not launch apps.
+      responses:
+        "200":
+          description: Launcher status response.
+        "401":
+          description: Unauthorized.
+  /launcher/open-any/status:
+    get:
+      operationId: getOpenAnyStatus
+      summary: Get open-any status. Does not launch apps.
+      responses:
+        "200":
+          description: Open-any status response.
+        "401":
+          description: Unauthorized.
+  /jira/issues/{key}:
+    get:
+      operationId: getJiraIssue
+      summary: Read a Jira issue by key.
+      parameters:
+        - name: key
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Jira issue response.
+        "401":
+          description: Unauthorized.
+        "404":
+          description: Issue not found.
+  /jira/issues/{key}/children:
+    get:
+      operationId: getJiraIssueChildren
+      summary: Read child issues or subtasks for a Jira issue key.
+      parameters:
+        - name: key
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Jira issue children response.
+        "401":
+          description: Unauthorized.
+        "404":
+          description: Issue not found.
+  /jira/subtasks/dry-run:
+    post:
+      operationId: dryRunJiraSubtasks
+      summary: Dry-run Jira subtask creation without creating issues.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              properties:
+                parentKey:
+                  type: string
+                subtasks:
+                  type: array
+                  items:
+                    type: object
+                    additionalProperties: true
+              required:
+                - parentKey
+                - subtasks
+      responses:
+        "200":
+          description: Dry-run response. No Jira issues are created.
+        "400":
+          description: Invalid request.
+        "401":
+          description: Unauthorized.
+components:
+  securitySchemes:
+    celineActionBearer:
+      type: http
+      scheme: bearer
+      bearerFormat: CELINE_ACTION_TOKEN
+      description: Use a separate action token placeholder. Store the real value only in Celine Server .env and the Custom GPT Action auth UI.

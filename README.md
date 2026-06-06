@@ -38,3 +38,20 @@ Use Celine's Big Book remote prompt.
 - GitHub, Vercel, Cloudflare, Jira, Pushover, Square, Stripe, Neon, or other service secrets
 
 Celine knows maps, not keys.
+
+## ChatGPT Action Package
+
+The sanitized Celine Server ChatGPT Action package is mirrored here for remote continuity:
+
+```text
+actions/chatgpt/
+```
+
+Primary reference:
+
+```text
+reference/chatgpt-action-package.md
+```
+
+Install-ready specs are read-only/dry-run only. Write-capable Actions require a future explicit phase and Ken approval.
+

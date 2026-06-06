@@ -14,3 +14,8 @@ Mobile ChatGPT cannot directly open these local paths.
 Use Codex when local files must be read or local scripts must run.
 
 Do not put secrets in this remote public repo.
+```text
+~/Celine/celine-server/actions/chatgpt/
+```
+
+This local path contains the live Celine Server ChatGPT Action foundation. The public sanitized mirror is `actions/chatgpt/` in this repo.

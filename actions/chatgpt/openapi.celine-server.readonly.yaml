@@ -1,0 +1,97 @@
+openapi: 3.1.0
+info:
+  title: Celine Server Read-Only Action
+  version: 0.1.0
+  description: Read-only Celine Server endpoints for a future ChatGPT Action. No write-capable routes are included.
+servers:
+  - url: https://celine.thecreatorsmark.org
+security:
+  - celineActionBearer: []
+paths:
+  /health:
+    get:
+      operationId: getHealth
+      summary: Get public service health.
+      security: []
+      responses:
+        "200":
+          description: Health response.
+  /status:
+    get:
+      operationId: getStatus
+      summary: Get protected Celine Server status.
+      responses:
+        "200":
+          description: Status response.
+        "401":
+          description: Unauthorized.
+  /projects:
+    get:
+      operationId: getProjects
+      summary: List registered Celine projects.
+      responses:
+        "200":
+          description: Project registry response.
+        "401":
+          description: Unauthorized.
+  /tools:
+    get:
+      operationId: getTools
+      summary: List detected local development tools.
+      responses:
+        "200":
+          description: Tool detection response.
+        "401":
+          description: Unauthorized.
+  /notifications:
+    get:
+      operationId: getNotifications
+      summary: Get notification bus status without secrets.
+      responses:
+        "200":
+          description: Notification status response.
+        "401":
+          description: Unauthorized.
+  /notifications/hooks:
+    get:
+      operationId: getNotificationHooks
+      summary: Get notification hook status without secrets.
+      responses:
+        "200":
+          description: Notification hook status response.
+        "401":
+          description: Unauthorized.
+  /forge-key:
+    get:
+      operationId: getForgeKeyStatus
+      summary: Get Forge Key status. Does not enable Forge Key.
+      responses:
+        "200":
+          description: Forge Key status response.
+        "401":
+          description: Unauthorized.
+  /launcher:
+    get:
+      operationId: getLauncherStatus
+      summary: Get controlled app launcher status. Does not launch apps.
+      responses:
+        "200":
+          description: Launcher status response.
+        "401":
+          description: Unauthorized.
+  /launcher/open-any/status:
+    get:
+      operationId: getOpenAnyStatus
+      summary: Get open-any status. Does not launch apps.
+      responses:
+        "200":
+          description: Open-any status response.
+        "401":
+          description: Unauthorized.
+components:
+  securitySchemes:
+    celineActionBearer:
+      type: http
+      scheme: bearer
+      bearerFormat: CELINE_ACTION_TOKEN
+      description: Use a separate action token placeholder. Store the real value only in Celine Server .env and the Custom GPT Action auth UI.

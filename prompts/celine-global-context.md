@@ -91,6 +91,16 @@ Protected routes may require:
 ChatGPT should not know the secret values.
 Codex/local scripts may source `.env` safely on Ken's Mac.
 
+Direct ChatGPT access to Celine Server requires a ChatGPT Action or MCP connector.
+
+The first local Action package lives at:
+
+```text
+~/Celine/celine-server/actions/chatgpt/
+```
+
+The initial install-ready specs are read-only/dry-run only. Write-capable actions require a future explicit phase and Ken approval.
+
 ## Default Write-Capable Workflow
 
 For anything that creates, updates, deletes, deploys, sends, launches, archives, or mutates:
