@@ -1,0 +1,232 @@
+openapi: 3.1.0
+info:
+  title: Celine Server Private GPT Action Gateway (Core)
+  version: 0.7.0
+  description: Private core gateway for Ken. Includes status, projects, tools, notifications, assistant, launcher, Forge Key, audit, Obsidian read, and Scrivener read. Requires CELINE_ACTION_TOKEN. Max 30 ChatGPT operations.
+servers:
+  - url: https://action-celine.thecreatorsmark.org
+security:
+  - celineActionBearer: []
+paths:
+  /gpt-action/private/health:
+    get:
+      operationId: getPrivateGatewayHealth
+      summary: Get private gateway health.
+      responses: { "200": { description: OK }, "401": { description: Unauthorized } }
+  /gpt-action/private/status:
+    get:
+      operationId: getPrivateGatewayStatus
+      summary: Get private gateway status and capability summary.
+      responses: { "200": { description: OK }, "401": { description: Unauthorized } }
+  /gpt-action/private/projects:
+    get:
+      operationId: getPrivateProjects
+      summary: Get Celine project registry.
+      responses: { "200": { description: OK }, "401": { description: Unauthorized } }
+  /gpt-action/private/tools:
+    get:
+      operationId: getPrivateTools
+      summary: Detect local development tools using fixed checks only.
+      responses: { "200": { description: OK }, "401": { description: Unauthorized } }
+  /gpt-action/private/system:
+    get:
+      operationId: getPrivateSystem
+      summary: Get basic system/runtime facts without env values.
+      responses: { "200": { description: OK }, "401": { description: Unauthorized } }
+  /gpt-action/private/apps:
+    get:
+      operationId: getPrivateInstalledApps
+      summary: List installed macOS app bundles. Does not open apps.
+      responses: { "200": { description: OK }, "401": { description: Unauthorized } }
+  /gpt-action/private/workspace/moth-market:
+    get:
+      operationId: getPrivateMothMarketWorkspace
+      summary: Get Moth Market workspace config. Does not open apps or URLs.
+      responses: { "200": { description: OK }, "401": { description: Unauthorized } }
+  /gpt-action/private/notifications:
+    get:
+      operationId: getPrivateNotificationStatus
+      summary: Get notification status without secrets.
+      responses: { "200": { description: OK }, "401": { description: Unauthorized } }
+  /gpt-action/private/notifications/events/recent:
+    get:
+      operationId: getPrivateRecentNotificationEvents
+      summary: Get recent notification events without secrets.
+      responses: { "200": { description: OK }, "401": { description: Unauthorized } }
+  /gpt-action/private/notifications/test:
+    post:
+      operationId: sendPrivateTestNotification
+      summary: Send one explicit test notification.
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title: { type: string, default: Celine Server }
+                message: { type: string, default: Private GPT Action notification test. }
+                severity:
+                  type: string
+                  enum: [silent, low, normal, high]
+                  default: normal
+      responses: { "200": { description: OK }, "401": { description: Unauthorized }, "502": { description: Provider failed } }
+  /gpt-action/private/assistant/jobs/catalog:
+    get:
+      operationId: getPrivateAssistantJobCatalog
+      summary: Get Assistant Bridge job catalog.
+      responses: { "200": { description: OK }, "401": { description: Unauthorized } }
+  /gpt-action/private/assistant/logs/recent:
+    get:
+      operationId: getPrivateAssistantLogs
+      summary: Get recent Assistant Bridge audit events.
+      responses: { "200": { description: OK }, "401": { description: Unauthorized } }
+  /gpt-action/private/assistant/jobs/dry-run:
+    post:
+      operationId: dryRunPrivateAssistantJob
+      summary: Dry-run an Assistant Bridge job. Does not execute jobs.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                jobType: { type: string }
+              required: [jobType]
+      responses: { "200": { description: OK }, "400": { description: Bad request }, "401": { description: Unauthorized } }
+  /gpt-action/private/assistant/jobs:
+    post:
+      operationId: queuePrivateAssistantJobPlaceholder
+      summary: Queue an in-memory Assistant Bridge placeholder. Does not execute jobs.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                jobType: { type: string }
+              required: [jobType]
+      responses: { "200": { description: OK }, "400": { description: Bad request }, "401": { description: Unauthorized } }
+  /gpt-action/private/launcher:
+    get:
+      operationId: getPrivateLauncherStatus
+      summary: Get launcher status. Does not launch apps.
+      responses: { "200": { description: OK }, "401": { description: Unauthorized } }
+  /gpt-action/private/launcher/apps:
+    get:
+      operationId: getPrivateLauncherApps
+      summary: Get allowlisted launcher apps. Does not launch apps.
+      responses: { "200": { description: OK }, "401": { description: Unauthorized } }
+  /gpt-action/private/launcher/logs/recent:
+    get:
+      operationId: getPrivateLauncherLogs
+      summary: Get recent launcher logs.
+      responses: { "200": { description: OK }, "401": { description: Unauthorized } }
+  /gpt-action/private/launcher/open-any/status:
+    get:
+      operationId: getPrivateOpenAnyStatus
+      summary: Get open-any status. Does not open apps.
+      responses: { "200": { description: OK }, "401": { description: Unauthorized } }
+  /gpt-action/private/launcher/open-any/events/recent:
+    get:
+      operationId: getPrivateOpenAnyEvents
+      summary: Get recent open-any audit events.
+      responses: { "200": { description: OK }, "401": { description: Unauthorized } }
+  /gpt-action/private/forge-key:
+    get:
+      operationId: getPrivateForgeKeyStatus
+      summary: Get Forge Key status. Does not enable or disable Forge Key.
+      responses: { "200": { description: OK }, "401": { description: Unauthorized } }
+  /gpt-action/private/forge-key/events/recent:
+    get:
+      operationId: getPrivateForgeKeyEvents
+      summary: Get recent Forge Key events.
+      responses: { "200": { description: OK }, "401": { description: Unauthorized } }
+  /gpt-action/private/audit/recent:
+    get:
+      operationId: getPrivateRecentAudit
+      summary: Get combined recent audit events.
+      responses: { "200": { description: OK }, "401": { description: Unauthorized } }
+  /gpt-action/private/obsidian/vault/list:
+    post:
+      operationId: listPrivateObsidianVaultPath
+      summary: List an Obsidian vault folder.
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                path: { type: string, default: / }
+      responses: { "200": { description: OK }, "401": { description: Unauthorized } }
+  /gpt-action/private/obsidian/vault/read:
+    post:
+      operationId: readPrivateObsidianVaultNote
+      summary: Read an Obsidian vault note by path.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                path: { type: string }
+              required: [path]
+      responses: { "200": { description: OK }, "401": { description: Unauthorized } }
+  /gpt-action/private/obsidian/vault/search:
+    post:
+      operationId: searchPrivateObsidianVault
+      summary: Search Obsidian vault notes.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query: { type: string }
+                contextLength: { type: number, default: 200 }
+              required: [query]
+      responses: { "200": { description: OK }, "401": { description: Unauthorized } }
+  /gpt-action/private/obsidian/vault/active:
+    get:
+      operationId: getPrivateObsidianActiveNote
+      summary: Get active Obsidian note.
+      responses: { "200": { description: OK }, "401": { description: Unauthorized } }
+  /gpt-action/private/scrivener/list:
+    post:
+      operationId: listPrivateScrivenerDocuments
+      summary: List Scrivener binder documents.
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                folder: { type: string, default: Manuscript }
+      responses: { "200": { description: OK }, "401": { description: Unauthorized } }
+  /gpt-action/private/scrivener/read:
+    post:
+      operationId: readPrivateScrivenerDocument
+      summary: Read a Scrivener document by title or UUID.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                titleOrUuid: { type: string }
+              required: [titleOrUuid]
+      responses: { "200": { description: OK }, "401": { description: Unauthorized }, "404": { description: Not found } }
+components:
+  securitySchemes:
+    celineActionBearer:
+      type: http
+      scheme: bearer
+      bearerFormat: CELINE_ACTION_TOKEN
+      description: Store the real CELINE_ACTION_TOKEN only in Celine Server .env and the Custom GPT Action auth UI.

@@ -1,0 +1,58 @@
+openapi: 3.1.0
+info:
+  title: Celine Server Private GPT Action Gateway (Keyboard Maestro)
+  version: 0.7.0
+  description: Private Keyboard Maestro gateway for Ken. Allowlisted macro preview/run only. Requires CELINE_ACTION_TOKEN and approvalText exactly equal to Ken approved this Keyboard Maestro macro for runs.
+servers:
+  - url: https://action-celine.thecreatorsmark.org
+security:
+  - celineActionBearer: []
+paths:
+  /gpt-action/private/keyboard-maestro:
+    get:
+      operationId: getPrivateKeyboardMaestroStatus
+      summary: Get Keyboard Maestro bridge status and guarded capabilities.
+      responses: { "200": { description: OK }, "401": { description: Unauthorized } }
+  /gpt-action/private/keyboard-maestro/macros:
+    get:
+      operationId: listPrivateKeyboardMaestroMacros
+      summary: List allowlisted Keyboard Maestro macro registry entries.
+      responses: { "200": { description: OK }, "401": { description: Unauthorized } }
+  /gpt-action/private/keyboard-maestro/macros/dry-run:
+    post:
+      operationId: dryRunPrivateKeyboardMaestroMacro
+      summary: Preview triggering an allowlisted Keyboard Maestro macro. Does not run the macro.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                macroId: { type: string }
+                parameter: { type: string }
+              required: [macroId]
+      responses: { "200": { description: Preview }, "403": { description: Macro not allowed }, "404": { description: Macro not found }, "401": { description: Unauthorized } }
+  /gpt-action/private/keyboard-maestro/macros/run:
+    post:
+      operationId: runPrivateKeyboardMaestroMacroWithApproval
+      summary: Trigger an allowlisted Keyboard Maestro macro only after Ken approves the preview. Requires approvalText exactly equal to "Ken approved this Keyboard Maestro macro".
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                approvalText: { type: string }
+                macroId: { type: string }
+                parameter: { type: string }
+              required: [approvalText, macroId]
+      responses: { "200": { description: Macro triggered }, "403": { description: Approval required or macro not allowed }, "404": { description: Macro not found }, "401": { description: Unauthorized }, "503": { description: Keyboard Maestro unavailable } }
+components:
+  securitySchemes:
+    celineActionBearer:
+      type: http
+      scheme: bearer
+      bearerFormat: CELINE_ACTION_TOKEN
+      description: Store the real CELINE_ACTION_TOKEN only in Celine Server .env and the Custom GPT Action auth UI.

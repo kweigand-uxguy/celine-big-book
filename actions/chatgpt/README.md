@@ -8,8 +8,12 @@ No real secrets belong here.
 
 ## Files
 
-- `openapi.celine-server.public.yaml` - public sanitized Action schema for connectivity testing.
-- `openapi.celine-server.private.yaml` - recommended Custom GPT install schema.
+- `openapi.celine-server.public.yaml` - public Action schema (4 operations).
+- `openapi.celine-server.private.core.yaml` - private core Action schema (28 operations).
+- `openapi.celine-server.private.jira.yaml` - private Jira Action schema (11 operations).
+- `openapi.celine-server.private.github.yaml` - private GitHub Action schema (13 operations).
+- `openapi.celine-server.private.keyboard-maestro.yaml` - private Keyboard Maestro Action schema (4 operations).
+- `openapi.celine-server.private.yaml` - combined reference only. Too large for ChatGPT install.
 - `openapi.celine-server.readonly.yaml` - legacy read-only schema.
 - `openapi.celine-jira.yaml` - legacy Jira read and dry-run schema.
 - `openapi.celine-server.yaml` - legacy combined read/dry-run schema.

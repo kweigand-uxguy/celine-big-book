@@ -2,7 +2,7 @@ openapi: 3.1.0
 info:
   title: Celine Server Private GPT Action Gateway
   version: 0.6.0
-  description: Private read, dry-run, approved Jira/GitHub write, allowlisted Keyboard Maestro macro, and approved-test GPT Action gateway for Ken. Requires CELINE_ACTION_TOKEN. Write/action routes require dry-run first and service-specific approvalText. No shell execution or arbitrary command execution.
+  description: Combined private reference spec with 54 operations. ChatGPT install limit is 30 operations per Action, so install the split specs openapi.celine-server.private.core.yaml, .jira.yaml, .github.yaml, and .keyboard-maestro.yaml instead. Private read, dry-run, approved Jira/GitHub write, allowlisted Keyboard Maestro macro, and approved-test GPT Action gateway for Ken. Requires CELINE_ACTION_TOKEN. Write/action routes require dry-run first and service-specific approvalText. No shell execution or arbitrary command execution.
 servers:
   - url: https://action-celine.thecreatorsmark.org
 security:

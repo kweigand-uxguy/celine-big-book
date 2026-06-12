@@ -1,5 +1,7 @@
 # ChatGPT Action Setup Checklist
 
+ChatGPT allows a maximum of **30 operations per Action**. Celine uses one public Action plus four private Actions.
+
 ## 1. Confirm hostnames
 
 Protected Celine control plane:
@@ -14,20 +16,7 @@ ChatGPT Action gateway:
 https://action-celine.thecreatorsmark.org
 ```
 
-Both hostnames route to the same local Celine Server process through Cloudflare Tunnel.
-
-## 2. Confirm tunnel and DNS
-
-Verify `~/.cloudflared/config.yml` includes both hostnames and that DNS routes exist for:
-
-```text
-celine.thecreatorsmark.org
-action-celine.thecreatorsmark.org
-```
-
-See `docs/cloudflare-tunnel.md`.
-
-## 3. Set the Action token
+## 2. Set the Action token
 
 Add a separate token to `~/Celine/celine-server/.env`:
 
@@ -39,63 +28,83 @@ Do not reuse `CELINE_API_TOKEN`.
 
 Restart Celine Server after changing the token.
 
-## 4. Choose the OpenAPI schema
+## 3. Add five Actions to one Custom GPT
 
-Public connectivity test only:
+### Action 1 — Public (no auth, 4 operations)
 
 ```text
 https://raw.githubusercontent.com/kweigand-uxguy/celine-big-book/main/actions/chatgpt/openapi.celine-server.public.yaml
 ```
 
-Recommended Custom GPT install:
+Authentication: **None**
+
+### Action 2 — Private Core (Bearer token, 28 operations)
 
 ```text
-https://raw.githubusercontent.com/kweigand-uxguy/celine-big-book/main/actions/chatgpt/openapi.celine-server.private.yaml
+https://raw.githubusercontent.com/kweigand-uxguy/celine-big-book/main/actions/chatgpt/openapi.celine-server.private.core.yaml
 ```
 
-Do not install `openapi.celine-server.write-capable.future.yaml`.
+Status, projects, tools, apps, workspace, notifications, assistant, launcher, Forge Key, audit, Obsidian read, Scrivener read.
 
-## 5. Configure the Custom GPT
+### Action 3 — Private Jira (Bearer token, 11 operations)
+
+```text
+https://raw.githubusercontent.com/kweigand-uxguy/celine-big-book/main/actions/chatgpt/openapi.celine-server.private.jira.yaml
+```
+
+### Action 4 — Private GitHub (Bearer token, 13 operations)
+
+```text
+https://raw.githubusercontent.com/kweigand-uxguy/celine-big-book/main/actions/chatgpt/openapi.celine-server.private.github.yaml
+```
+
+### Action 5 — Private Keyboard Maestro (Bearer token, 4 operations)
+
+```text
+https://raw.githubusercontent.com/kweigand-uxguy/celine-big-book/main/actions/chatgpt/openapi.celine-server.private.keyboard-maestro.yaml
+```
+
+For Actions 2–5:
+
+- Authentication: **API Key → Bearer**
+- Token: `CELINE_ACTION_TOKEN`
+
+Do **not** install `openapi.celine-server.private.yaml`. That combined reference file has 54 operations and exceeds ChatGPT's 30-operation limit.
+
+## 4. Configure the Custom GPT
 
 1. Paste `custom-gpt-instructions.md` into the GPT instructions.
-2. Add the private OpenAPI schema as an Action.
-3. Set Action authentication to Bearer token.
-4. Store `CELINE_ACTION_TOKEN` in the Action auth UI only.
+2. Add all five Actions above.
+3. Use public Action 1 for connectivity and sanitized reads.
+4. Use private Actions 2–5 only when Ken needs local bridge access.
 5. Do not paste tokens into chat.
 
-## 6. Local test before remote test
+## 5. Local test
 
 ```bash
 cd ~/Celine/celine-server
+bash actions/chatgpt/test-action-spec.sh
 scripts/test-private-gpt-action-gateway.sh
 ```
 
-## 7. Remote test order
+## 6. Remote test order
 
-1. `GET /gpt-action/health`
-2. `GET /gpt-action/status`
-3. `getPrivateGatewayHealth`
-4. `getPrivateGatewayStatus`
-5. `getPrivateProjects`
-6. `getPrivateAssistantJobCatalog`
-7. `dryRunPrivateAssistantJob`
-8. `getPrivateLauncherStatus`
-9. `getPrivateForgeKeyStatus`
+1. `getPublicGatewayHealth`
+2. `getPrivateGatewayHealth`
+3. `getPrivateGatewayStatus`
+4. `getPrivateProjects`
+5. `dryRunPrivateAssistantJob`
+6. `dryRunPrivateJiraSubtasks` or `dryRunPrivateCreateGitHubIssue` as needed
 
-## 8. Write-capable routes
+## 7. Write approval texts
 
-The private gateway includes approved Jira, GitHub, and Keyboard Maestro write routes.
+| Service | Exact `approvalText` |
+|---|---|
+| Jira | `Ken approved this Jira write` |
+| GitHub | `Ken approved this GitHub write` |
+| Keyboard Maestro | `Ken approved this Keyboard Maestro macro` |
 
-For every write:
-
-1. Call the matching dry-run or preview route first.
-2. Show Ken the exact planned payload.
-3. Only call the write route if Ken explicitly approves.
-4. Include the exact approval text required by the route.
-
-Do not skip dry-run.
-
-## 9. Still excluded from ChatGPT
+## 8. Still excluded from ChatGPT
 
 - App launching
 - Open-any app launching
@@ -103,10 +112,3 @@ Do not skip dry-run.
 - Shell or arbitrary command execution
 - Obsidian write/append/patch/import
 - Scrivener write/create/delete
-
-## 10. If Cloudflare Access blocks calls
-
-- Do not remove security from the protected hostname.
-- Use `action-celine.thecreatorsmark.org` for ChatGPT Actions.
-- Allow only `/gpt-action/*` on the action hostname.
-- Keep private routes protected by `CELINE_ACTION_TOKEN`.
